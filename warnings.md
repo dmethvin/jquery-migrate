@@ -229,3 +229,10 @@ See jQuery-ui [commit](https://github.com/jquery/jquery-ui/commit/c0093b599fcd58
 **Cause:** This public but never-documented method has been deprecated as of jQuery 3.2.0.
 
 **Solution:** Replace calls such as `jQuery.nodeName( elem, "div" )` with a test such as `elem.nodeName.toLowerCase() === "div"`.
+
+### JQMIGRATE: Use of number-typed values is deprecated in jQuery.fn.css
+### JQMIGRATE: jQuery.cssNumber is deprecated
+
+**Cause:** In past versions, when a number-typed value was passed to `.css()` jQuery converted it to a string and added `"px"` to the end. As the CSS standard has evolved, an increasingly large set of CSS properties now accept values that are unitless numbers, where this behavior is incorrect. It has become impractical to manage these exceptions in the `jQuery.cssNumber` object. In addition, some CSS properties like `line-height` can accept both a bare number `2` or a pixel value `2px`. jQuery cannot know the correct way to interpret `$.css("line-height", 2)` and currently treats it as `"2px"`.
+
+**Solution:** Always pass string values to `.css()`, and explicitly add units where required. For example, use `$.css("line-height", "2")` to specify 200% of the current line height or `$.css("line-height", "2px")` to specify pixels. When the numeric value is in a variable, ensure the value is converted to string, e.g. `$.css("line-height", String(height))` and `$.css("line-height", height+"px")`.
