@@ -36,7 +36,7 @@ QUnit.test( "jQuery.easing", function( assert ) {
 		duration: 50,
 		easing: "testOld",
 		complete: function() {
-			assert.equal( jQuery.migrateWarnings.length, 1, "warned" );
+			assert.ok( jQuery.migrateWarnings.length > 0, "warned" );
 			jQuery.migrateWarnings.length = 0;
 			div.animate( { width: "10px" }, {
 				duration: 50,
@@ -60,8 +60,11 @@ QUnit.test( "jQuery.fx.interval - no warning on animations", function( assert ) 
 	jQuery.migrateReset();
 	jQuery( "<div />" )
 		.appendTo( "#qunit-fixture" )
-		.animate( { opacity: 0.5 }, 50, function() {
-			assert.equal( jQuery.migrateWarnings.length, 0, "no warning" );
+		.animate( { opacity: "0.5" }, 50, function() {
+			var warns = jQuery.migrateWarnings.filter( function( w ) {
+				return !/cssNumber/.test( w );
+			} );
+			assert.equal( warns.length, 0, "no warning: " + jQuery.migrateWarnings );
 			start();
 		} );
 } );

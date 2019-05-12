@@ -41,3 +41,48 @@ QUnit[ ( jQueryVersionSince( "3.4.0" ) && typeof Proxy !== "undefined" ) ? "test
 
 	delete jQuery.cssProps.devoHat;
 } );
+
+QUnit.test( "jQuery.css with numbers", function( assert) {
+	assert.expect( 4 );
+
+	expectWarning( assert, "Number value direct", function() {
+		jQuery( "<div />" ).css( "height", 10 );
+	} );
+
+	expectWarning( assert, "Number in an object", function() {
+		jQuery( "<div />" ).css( {
+			"width": 14,
+			"height": "10px",
+			"line-height": 2
+		} );
+	} );
+
+	expectNoWarning( assert, "Number px value direct", function() {
+		jQuery( "<div />" ).css( "height", "10px" );
+	} );
+
+	expectNoWarning( assert, "Number px in an object", function() {
+		jQuery( "<div />" ).css( {
+			"width": "14em",
+			"height": "10px",
+			"line-height": "2"
+		} );
+	} );
+
+} );
+
+QUnit.test( "jQuery.cssNumber", function( assert) {
+	assert.expect( 3 );
+
+	expectWarning( assert, "Setting cssNumber value", 1, function() {
+		jQuery.cssNumber.blart = true;
+	} );
+
+
+	expectWarning( assert, "Getting cssNumber value", function() {
+		assert.ok( jQuery.cssNumber.blart, "blart was set" );
+	} );
+
+	delete jQuery.cssNumber.blart;
+
+} );
