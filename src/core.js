@@ -2,16 +2,23 @@
 var oldInit = jQuery.fn.init,
 	oldFind = jQuery.find,
 	rattrHashTest = /\[(\s*[-\w]+\s*)([~|^$*]?=)\s*([-\w#]*?#[-\w#]*)\s*\]/,
-	rattrHashGlob = /\[(\s*[-\w]+\s*)([~|^$*]?=)\s*([-\w#]*?#[-\w#]*)\s*\]/g;
+	rattrHashGlob = /\[(\s*[-\w]+\s*)([~|^$*]?=)\s*([-\w#]*?#[-\w#]*)\s*\]/g,
+	posSelector = /^(.*):(even|odd|lt|gt|eq|first|last)[^\-]/;
 
 jQuery.fn.init = function( arg1 ) {
 	var args = Array.prototype.slice.call( arguments );
 
-	if ( typeof arg1 === "string" && arg1 === "#" ) {
+	if ( typeof arg1 === "string" ) {
 
-		// JQuery( "#" ) is a bogus ID selector, but it returned an empty set before jQuery 3.0
-		migrateWarn( "jQuery( '#' ) is not a valid selector" );
-		args[ 0 ] = [];
+		if ( arg1 === "#" ) {
+			migrateWarn( "jQuery( '#' ) is not a valid selector" );
+			args[ 0 ] = [];
+		} else {
+			var parsed = posSelector.exec( arg1 );
+			if ( parsed ) {
+				migrateWarn( "Positional selectors are deprecated: " + parsed[ 2 ] );
+			}
+		}
 	}
 
 	return oldInit.apply( this, args );

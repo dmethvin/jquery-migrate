@@ -80,13 +80,13 @@ QUnit.test( "Attribute selectors with unquoted hashes", function( assert ) {
 
 		// False positives that still work
 		positives = [
-			"div[data-selector='a[href=#main]']:first",
+			"div[data-selector='a[href=#main]']:last-child",
 			"input[value= '[strange*=#stuff]']:eq(0)"
 		],
 
 		// Failures due to quotes and jQuery extensions combined
 		failures = [
-			"p[class ^= #junk]:first",
+			"p[class ^= #junk]:first-child",
 			"a[href=space#junk]:eq(1)"
 		];
 
@@ -359,6 +359,31 @@ QUnit.test( "jQuery.expr.pseudos aliases", function( assert ) {
 		delete jQuery.expr.pseudos.marginal;
 	} );
 
+} );
+
+QUnit.test( "positional selectors", function( assert ) {
+	assert.expect( 10 );
+
+	var markup = jQuery(
+			"<div>" +
+				"<p>p0</p><p>p1</p><p>p2</p><span>span0</span><p>p3</p>" +
+				"<div>" +
+					"<p>p4</p><p>p5</p><span>span1</span>" +
+				"</div>" +
+			"</div>"
+		),
+		pos = function(s, t) {
+			expectWarning( assert, s, 1, function() {
+				assert.equal( jQuery(s, markup).text(), t );
+			} );
+		};
+
+		// Two assertions per query (value and warning)
+		pos( "p:first", "p0" );
+		pos( "p:last", "p5" );
+		pos( "div:eq(0)", "p4p5span1" );
+		pos( "p:gt(2)", "p3p4p5" );
+		pos( "span:lt(1)", "span0" );
 } );
 
 QUnit.test( "jQuery.holdReady (warn only)", function( assert ) {
