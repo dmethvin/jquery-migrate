@@ -1,6 +1,7 @@
 
 var oldInit = jQuery.fn.init,
 	oldFind = jQuery.find,
+	rposSelector = /:(even|odd|first(?!-)|last(?!-)|eq|gt|lt)/,
 	rattrHashTest = /\[(\s*[-\w]+\s*)([~|^$*]?=)\s*([-\w#]*?#[-\w#]*)\s*\]/,
 	rattrHashGlob = /\[(\s*[-\w]+\s*)([~|^$*]?=)\s*([-\w#]*?#[-\w#]*)\s*\]/g;
 
@@ -45,6 +46,14 @@ jQuery.find = function( selector ) {
 			} catch ( err2 ) {
 				migrateWarn( "Attribute selector with '#' was not fixed: " + args[ 0 ] );
 			}
+		}
+	}
+
+	if ( typeof selector === "string" ) {
+		var bad = rposSelector.exec( selector );
+
+		if ( bad ) {
+			migrateWarn( "Deprecated selector '" + bad[ 1 ] + "' in string: '" + selector + "'" );
 		}
 	}
 

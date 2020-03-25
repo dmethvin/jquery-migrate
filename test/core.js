@@ -104,14 +104,16 @@ QUnit.test( "Attribute selectors with unquoted hashes", function( assert ) {
 		} );
 	} );
 
-	expectWarning( assert, "False positives", positives.length, function() {
+	// Two warnings per case because of deprecated positional selectors
+	expectWarning( assert, "False positives", positives.length*2, function() {
 		positives.forEach( function( positive ) {
 			assert.equal( jQuery( positive, markup ).length, 1,  positive );
 			assert.equal( markup.find( positive ).length, 1, positive );
 		} );
 	} );
 
-	expectWarning( assert, "Unfixable cases", failures.length, function() {
+	// Two warnings per case because of deprecated positional selectors
+	expectWarning( assert, "Unfixable cases", failures.length*2, function() {
 		failures.forEach( function( failure ) {
 			try {
 				jQuery( failure, markup );
@@ -440,6 +442,29 @@ QUnit[ jQueryVersionSince( "3.3.0" ) ? "test" : "skip" ]( "jQuery.isArray", func
 	} );
 
 } );
+
+QUnit[ jQueryVersionSince( "3.4.0" ) ? "test" : "skip" ]( "Pos selectors", function( assert ) {
+	assert.expect( 2 );
+
+	expectWarning( assert, "pos", 8, function() {
+		jQuery( "div:lt(5)" );
+		jQuery( "div:gt(5)" );
+		jQuery( "div:even" );
+		jQuery( "div:odd" );
+		jQuery( "div:first" );
+		jQuery( "div:last" );
+		jQuery( "div:first p" );
+		jQuery( "div:last p" );
+	} );
+
+	expectNoWarning( assert, "non-pos", function() {
+		jQuery( "div:first-child" );
+		jQuery( "div:last-child" );
+		jQuery( "p" );
+	} );
+
+} );
+
 
 TestManager.runIframeTest( "old pre-3.0 jQuery", "core-jquery2.html",
 	function( assert, jQuery, window, document, log ) {
